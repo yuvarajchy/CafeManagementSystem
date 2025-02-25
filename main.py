@@ -14,7 +14,7 @@ root.resizable(True, True)  # Allow resizing
 
 # Load background image
 bg_image = Image.open("images/home_bg.jpg")
-bg_image = bg_image.resize((1366, 768), Image.LANCZOS)  # Resize to fit screen
+bg_image = bg_image.resize((1600, 870), Image.LANCZOS)  # Resize to fit screen
 bg_photo = ImageTk.PhotoImage(bg_image)
 
 # Create Canvas for background

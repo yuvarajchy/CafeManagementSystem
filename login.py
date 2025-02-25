@@ -64,7 +64,7 @@ root.state("zoomed")  # Full screen
 root.resizable(True, True)  # Allow resizing
 
 # Split screen into two parts (left for image and text, right for form)
-frame_left = Frame(root, width=700, height=500, bg="#f5f5f5")
+frame_left = Frame(root, width=1050, height=600, bg="#f5f5f5")
 frame_left.pack(side=LEFT, fill=Y)
 
 frame_right = Frame(root, width=500, height=500, bg="white")
@@ -72,6 +72,7 @@ frame_right.pack(side=RIGHT, fill=Y)
 
 # Left frame content (Image and overlay text)
 image = Image.open("images/home_bg.jpg")  # Adjust the image path as needed
+# image = image.resize((1600, 870), Image.LANCZOS)
 image_tk = ImageTk.PhotoImage(image)
 
 label_image = Label(frame_left, image=image_tk, bg="#f5f5f5")
