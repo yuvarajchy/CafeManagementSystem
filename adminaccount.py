@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import os
 import sys
 import subprocess
+import tkinter.messagebox as MessageBox
 
 # Function to clear the content frame
 def clear_content():
@@ -248,10 +249,25 @@ def manage_employees():
     treeview.bind("<ButtonRelease-1>", on_select)
 
     # Load employee data from the database
+    # def load_employees():
+    #     conn = sqlite3.connect("cafe_management.db")
+    #     cursor = conn.cursor()
+    #     cursor.execute("SELECT * FROM users WHERE role='employee'")  # Load only employees
+    #     employees = cursor.fetchall()
+    #     conn.close()
+
+    #     # Clear existing data in the table
+    #     for row in treeview.get_children():
+    #         treeview.delete(row)
+
+    #     # Insert employee data into the table
+    #     for employee in employees:
+    #         treeview.insert("", "end", values=(employee[0], employee[1], employee[4], employee[2], employee[3], employee[5], employee[6], employee[7]))
+
     def load_employees():
         conn = sqlite3.connect("cafe_management.db")
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE role='employee'")  # Load only employees
+        cursor.execute("SELECT id, fullname, age, gender, username, position, salary, role FROM users WHERE role='employee'")  
         employees = cursor.fetchall()
         conn.close()
 
@@ -261,37 +277,82 @@ def manage_employees():
 
         # Insert employee data into the table
         for employee in employees:
-            treeview.insert("", "end", values=(employee[0], employee[1], employee[4], employee[2], employee[3], employee[5], employee[6], employee[7]))
+            treeview.insert("", "end", values=(
+                employee[0],  # ID
+                employee[1],  # Full Name
+                employee[2],  # Age
+                employee[3],  # Gender
+                employee[4],  # Username
+                employee[5],  # Position
+                employee[6],  # Salary
+                employee[7]   # Role (should be "employee")
+            ))
+
 
     # Add an employee to the database
+    # def add_employee():
+    #     fullname = fullname_entry.get()
+    #     username = username_entry.get()
+    #     age = age_entry.get()
+    #     gender = gender_entry.get()
+    #     position = position_entry.get()
+    #     salary = salary_entry.get()
+    #     password = password_entry.get()
+
+    #     conn = sqlite3.connect("cafe_management.db")
+    #     cursor = conn.cursor()
+
+    #     # Insert employee with default role 'employee'
+    #     cursor.execute("INSERT INTO users (fullname, age, gender, username, password, position, salary, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    #                    (fullname, age, gender, username, password, position, salary, role))
+    #     conn.commit()
+    #     conn.close()
+
+    #     # Clear form fields after adding
+    #     fullname_entry.delete(0, END)
+    #     username_entry.delete(0, END)
+    #     age_entry.delete(0, END)
+    #     gender_entry.delete(0, END)
+    #     position_entry.delete(0, END)
+    #     salary_entry.delete(0, END)
+    #     password_entry.delete(0, END)
+
+    #     load_employees()
+
+    # import tkinter.messagebox as MessageBox
+
     def add_employee():
         fullname = fullname_entry.get()
-        username = username_entry.get()
         age = age_entry.get()
         gender = gender_entry.get()
+        username = username_entry.get()
         position = position_entry.get()
         salary = salary_entry.get()
         password = password_entry.get()
 
+        if not fullname or not age or not gender or not username or not position or not salary or not password:
+            MessageBox.showwarning("Input Error", "All fields are required!")
+            return
+
         conn = sqlite3.connect("cafe_management.db")
         cursor = conn.cursor()
-
-        # Insert employee with default role 'employee'
         cursor.execute("INSERT INTO users (fullname, age, gender, username, password, position, salary, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                       (fullname, age, gender, username, password, position, salary, role))
+                        (fullname, age, gender, username, password, position, salary, role))
         conn.commit()
         conn.close()
 
-        # Clear form fields after adding
+        MessageBox.showinfo("Success", "Employee created successfully!")  # Success message
+
         fullname_entry.delete(0, END)
-        username_entry.delete(0, END)
         age_entry.delete(0, END)
         gender_entry.delete(0, END)
+        username_entry.delete(0, END)
         position_entry.delete(0, END)
         salary_entry.delete(0, END)
         password_entry.delete(0, END)
 
-        load_employees()
+        load_employees()  # Refresh the table
+
 
     # Delete selected employee from the database
     def delete_employee():
@@ -304,8 +365,11 @@ def manage_employees():
             conn.commit()
             conn.close()
             load_employees()
+            # Show success message
+            MessageBox.showinfo("Success", "Employee deleted successfully!")
 
     # Update selected employee details in the database
+
     def update_employee():
         selected_item = treeview.selection()
         if selected_item:
@@ -321,7 +385,7 @@ def manage_employees():
             conn = sqlite3.connect("cafe_management.db")
             cursor = conn.cursor()
             cursor.execute("UPDATE users SET fullname=?, age=?, gender=?, username=?, password=?, position=?, salary=? WHERE id=?",
-                           (fullname, age, gender, username, password, position, salary, employee_id))
+                        (fullname, age, gender, username, password, position, salary, employee_id))
             conn.commit()
             conn.close()
 
@@ -334,7 +398,15 @@ def manage_employees():
             salary_entry.delete(0, END)
             password_entry.delete(0, END)
 
+            # Reload employee data
             load_employees()
+
+            # Show success message
+            MessageBox.showinfo("Success", "Employee updated successfully!")
+        else:
+            MessageBox.showwarning("Warning", "Please select an employee to update.")
+
+            
 
     # Clear form fields
     def clear_form():
